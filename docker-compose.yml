@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10000:10000"
+    environment:
+      - NODE_ENV=development
+      - PORT=10000
+      - MONGO_URI=mongodb://mongodb:27017/bb-db
+      - JWT_SECRET=local_development_jwt_secret_32_chars_minimum
+      - CLIENT_URL=http://localhost:5173
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:7.0.5-jammy
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:

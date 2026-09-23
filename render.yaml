@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: bb-application
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromDatabase:
+          name: bb-mongodb
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        value: https://bb-application.onrender.com # Update with your custom domain or actual Render URL
+
+databases:
+  - name: bb-mongodb
+    plan: free
+    region: oregon
+    ipAllowList: [] # empty means only accessible inside Render network for security
